@@ -79,15 +79,23 @@ class LoRaWANClass
         void setTxPower(unsigned char power_idx);
         int readData(char *outBuff);
         void update(void);
+        void activateISR(int on);
+
+        void onReceive(void(*callback)(int));
+        void ISR_handler(void);
 
         // frame counter
         unsigned int getFrameCounter();
         void setFrameCounter(unsigned int FrameCounter);
 
+        
+
     private:
         void randomChannel();
+        static void onDio0Rise();
 
-    private:        
+    private:       
+        void (*_onReceive)(int);
         // Messages
         unsigned char Data_Tx[64];
         sBuffer Buffer_Tx;
@@ -127,5 +135,7 @@ class LoRaWANClass
         RFM_command_t RFM_Command_Status;
         rx_t Rx_Status;
 };
+
+extern LoRaWANClass lora;
 
 #endif
