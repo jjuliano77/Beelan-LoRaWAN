@@ -87,21 +87,21 @@ bool LoRaWANClass::init(void)
     LoRa_Settings.Mote_Class = 0x00; //0x00 is type A, 0x01 is type C
     
     // Rx
-#if defined(AS_923)
-    LoRa_Settings.Datarate_Rx = 0x02;   //set to SF10 BW 125 kHz
-#elif defined(EU_868)
-    LoRa_Settings.Datarate_Rx = 0x03;   //set to SF9 BW 125 kHz
-#else //US_915
-    LoRa_Settings.Datarate_Rx = 0x0C;   //set to SF8 BW 500 kHz
-#endif
-    LoRa_Settings.Channel_Rx = 0x0A;    // set to recv channel
+    #if defined(AS_923)
+        LoRa_Settings.Datarate_Rx = 0x02;   //set to SF10 BW 125 kHz
+    #elif defined(EU_868)
+        LoRa_Settings.Datarate_Rx = 0x03;   //set to SF9 BW 125 kHz
+    #else //US_915
+        LoRa_Settings.Datarate_Rx = 0x0C;   //set to SF8 BW 500 kHz
+    #endif
+        LoRa_Settings.Channel_Rx = 0x0A;    // set to recv channel
 
-    // Tx
-#if defined(US_915)
-    LoRa_Settings.Datarate_Tx = drate_common = 0x02;   //set to SF7 BW 125 kHz
-#else
-    LoRa_Settings.Datarate_Tx = drate_common = 0x00;   //set to SF12 BW 125 kHz
-#endif
+        // Tx
+    #if defined(US_915)
+        LoRa_Settings.Datarate_Tx = drate_common = 0x02;   //set to SF7 BW 125 kHz
+    #else
+        LoRa_Settings.Datarate_Tx = drate_common = 0x00;   //set to SF12 BW 125 kHz
+    #endif
     LoRa_Settings.Channel_Tx = 0x00;    // set to channel 0
 
     LoRa_Settings.Confirm = 0x00; //0x00 unconfirmed, 0x01 confirmed
@@ -161,7 +161,7 @@ bool LoRaWANClass::join(void)
         randomChannel();
     }
     // join request
-    LoRa_Send_JoinReq(&OTAA_Data, &LoRa_Settings);
+    LORA_Send_JoinReq(&OTAA_Data, &LoRa_Settings);
 
     // loop for <timeout> wait for join accept
     prev_millis = millis();
@@ -235,14 +235,14 @@ void LoRaWANClass::setDeviceClass(devclass_t dev_class)
 {
     LoRa_Settings.Mote_Class = (dev_class == CLASS_A)? CLASS_A : CLASS_C;
 
-    if (LoRa_Settings.Mote_Class == CLASS_A) {
-        RFM_Switch_Mode(RFM_MODE_STANDBY);
-    } else {
-        RFM_Continuous_Receive(&LoRa_Settings);
-    }
+    if (LoRa_Settings.Mote_Class == 0x00) {
+        RFM_Switch_Mode(0x01); //Class A 
+    } 
+    else {
+        RFM_Continuous_Receive(&LoRa_Settings); //Class C
 
-    //Reset RFM command
-    //RFM_Command_Status = NO_RFM_COMMAND;
+
+    }
 }
 
 void LoRaWANClass::sendUplink(char *data, unsigned int len, unsigned char confirm)
