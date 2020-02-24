@@ -31,7 +31,10 @@
 #include "lorawan-arduino-rfm.h"
 #include "Conversions.h"
 
-LoRaWANClass::LoRaWANClass()
+#define ISR_PREFIX
+
+LoRaWANClass::LoRaWANClass():
+  _onReceive(NULL)
 {
 
 }
@@ -253,9 +256,6 @@ void LoRaWANClass::sendUplink(char *data, unsigned int len, unsigned char confir
     }
 
     LoRa_Settings.Confirm = (confirm == 0) ? 0 : 1;
-
-    //Set new command 
-    //RFM_Command_Status = NEW_RFM_COMMAND;
     
     Buffer_Tx.Counter = len;
     memcpy(Buffer_Tx.Data,data,len);
@@ -368,20 +368,43 @@ void LoRaWANClass::update(void)
           Rx_Status = NEW_RX;
         }        
       }
-
 }
+
+void LoRaWANClass::onReceive(void(*callback)(int))
+{
+  _onReceive = callback;
+  LORA_Set_Interrupt();
+  if (callback) {
+    attachInterrupt(digitalPinToInterrupt(RFM_pins.DIO0), LoRaWANClass::onDio0Rise, RISING);
+  } else {
+    detachInterrupt(digitalPinToInterrupt(RFM_pins.DIO0));
+  }
+}
+
+
+void LoRaWANClass::ISR_handler(void)
+{
+    LORA_Get_Data(&Buffer_Rx, &Session_Data, &OTAA_Data, &Message_Rx, &LoRa_Settings);
+}
+
+
+ISR_PREFIX void LoRaWANClass::onDio0Rise()
+{
+  lora.ISR_handler();
+}
+
 
 void LoRaWANClass::randomChannel()
 {
     unsigned char freq_idx;
-#ifdef AS_923
-    freq_idx = random(0,9);
-    // limit drate, ch 8 -> sf7bw250
-    LoRa_Settings.Datarate_Tx = freq_idx == 0x08? 0x06 : drate_common;
-#else
-    freq_idx = random(0,8);
-    LoRa_Settings.Channel_Rx = freq_idx + 0x08;
-#endif
+    #ifdef AS_923
+        freq_idx = random(0,9);
+        // limit drate, ch 8 -> sf7bw250
+        LoRa_Settings.Datarate_Tx = freq_idx == 0x08? 0x06 : drate_common;
+    #else
+        freq_idx = random(0,8);
+        LoRa_Settings.Channel_Rx = freq_idx + 0x08;
+    #endif
     LoRa_Settings.Channel_Tx = freq_idx;
 }
 
@@ -392,8 +415,6 @@ unsigned int LoRaWANClass::getFrameCounter() {
 void LoRaWANClass::setFrameCounter(unsigned int FrameCounter) {
     Frame_Counter_Tx = FrameCounter;
 }
-
-
 
 // define lora objet 
 LoRaWANClass lora;
