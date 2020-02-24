@@ -216,67 +216,67 @@ static void RFM_change_SF_BW(unsigned char _SF, unsigned char _BW)
 */
 static void RFM_Change_Datarate(unsigned char Datarate)
 {
-#if defined(US_915)
-  switch (Datarate) {
-  case 0x00:  // SF10BW125
-    RFM_change_SF_BW(10,0x07);
-    break;
-  case 0x01:  // SF9BW125
-    RFM_change_SF_BW(9,0x07);
-    break;
-  case 0x02:  // SF8BW125
-    RFM_change_SF_BW(8,0x07);
-    break;
-  case 0x03:  // SF7BW125
-    RFM_change_SF_BW(7,0x07);
-    break;
-  case 0x04:  // SF8BW500
-    RFM_change_SF_BW(8,0x09);
-    break;
-  case 0x08:  // SF12BW500
-    RFM_change_SF_BW(12,0x09);
-    break;
-  case 0x09:  // SF11BW500
-    RFM_change_SF_BW(11,0x09);
-    break;
-  case 0x0A:  // SF10BW500
-    RFM_change_SF_BW(10,0x09);
-    break;
-  case 0x0B:  // SF9BW500
-    RFM_change_SF_BW(9,0x09);
-    break;
-  case 0x0C:  // SF8BW500
-    RFM_change_SF_BW(8,0x09);
-    break;
-  case 0x0D:  // SF7BW500
-    RFM_change_SF_BW(7,0x09);
-    break;
-  }
-#else
-  switch (Datarate) {
-  case 0x00:  // SF12BW125
-    RFM_change_SF_BW(12,0x07);
-    break;
-  case 0x01:  // SF11BW125
-    RFM_change_SF_BW(11,0x07);
-    break;
-  case 0x02:  // SF10BW125
-    RFM_change_SF_BW(10,0x07);
-    break;
-  case 0x03:  // SF9BW125
-    RFM_change_SF_BW(9,0x07);
-    break;
-  case 0x04:  // SF8BW125
-    RFM_change_SF_BW(8,0x07);
-    break;
-  case 0x05:  // SF7BW125
-    RFM_change_SF_BW(7,0x07);
-    break;
-  case 0x06:  // SF7BW250
-    RFM_change_SF_BW(7,0x08);
-    break;
-  }
-#endif
+  #if defined(US_915)
+    switch (Datarate) {
+    case 0x00:  // SF10BW125
+      RFM_change_SF_BW(10,0x07);
+      break;
+    case 0x01:  // SF9BW125
+      RFM_change_SF_BW(9,0x07);
+      break;
+    case 0x02:  // SF8BW125
+      RFM_change_SF_BW(8,0x07);
+      break;
+    case 0x03:  // SF7BW125
+      RFM_change_SF_BW(7,0x07);
+      break;
+    case 0x04:  // SF8BW500
+      RFM_change_SF_BW(8,0x09);
+      break;
+    case 0x08:  // SF12BW500
+      RFM_change_SF_BW(12,0x09);
+      break;
+    case 0x09:  // SF11BW500
+      RFM_change_SF_BW(11,0x09);
+      break;
+    case 0x0A:  // SF10BW500
+      RFM_change_SF_BW(10,0x09);
+      break;
+    case 0x0B:  // SF9BW500
+      RFM_change_SF_BW(9,0x09);
+      break;
+    case 0x0C:  // SF8BW500
+      RFM_change_SF_BW(8,0x09);
+      break;
+    case 0x0D:  // SF7BW500
+      RFM_change_SF_BW(7,0x09);
+      break;
+    }
+  #else
+    switch (Datarate) {
+    case 0x00:  // SF12BW125
+      RFM_change_SF_BW(12,0x07);
+      break;
+    case 0x01:  // SF11BW125
+      RFM_change_SF_BW(11,0x07);
+      break;
+    case 0x02:  // SF10BW125
+      RFM_change_SF_BW(10,0x07);
+      break;
+    case 0x03:  // SF9BW125
+      RFM_change_SF_BW(9,0x07);
+      break;
+    case 0x04:  // SF8BW125
+      RFM_change_SF_BW(8,0x07);
+      break;
+    case 0x05:  // SF7BW125
+      RFM_change_SF_BW(7,0x07);
+      break;
+    case 0x06:  // SF7BW250
+      RFM_change_SF_BW(7,0x08);
+      break;
+    }
+  #endif
 }
 /*
 *****************************************************************************************
@@ -288,28 +288,28 @@ static void RFM_Change_Datarate(unsigned char Datarate)
 */
 static void RFM_Change_Channel(unsigned char Channel)
 {
-#if defined(AS_923)
-  if (Channel <= 0x08)
-    for(unsigned char i = 0 ; i < 3 ; ++i)
-      RFM_Write(0x06 + i, pgm_read_byte(&(LoRa_Frequency[Channel][i])));
-  else if (Channel == 0x10)
-    for(unsigned char i = 0 ; i < 3 ; ++i)
-      RFM_Write(0x06 + i, pgm_read_byte(&(LoRa_Frequency[0][i])));
-#elif defined(EU_868)
-  if (Channel <= 0x08)
-    for(unsigned char i = 0 ; i < 3 ; ++i)
-      RFM_Write(0x06 + i, pgm_read_byte(&(LoRa_Frequency[Channel][i])));
-  else if (Channel == 0x10)
-    for(unsigned char i = 0 ; i < 3 ; ++i)
-      RFM_Write(0x06 + i, pgm_read_byte(&(LoRa_Frequency[8][i])));
-#else   //US915
-  if (Channel <= 0x07)
-    for(unsigned char i = 0 ; i < 3 ; ++i)
-      RFM_Write(0x06 + i, pgm_read_byte(&(LoRa_TX_Freq[Channel][i])));
-  else if (Channel >= 0x08 && Channel <= 0x0F)
-    for(unsigned char i = 0 ; i < 3 ; ++i)
-      RFM_Write(0x06 + i, pgm_read_byte(&(LoRa_RX_Freq[Channel - 0x08][i])));
-#endif
+  #if defined(AS_923)
+    if (Channel <= 0x08)
+      for(unsigned char i = 0 ; i < 3 ; ++i)
+        RFM_Write(0x06 + i, pgm_read_byte(&(LoRa_Frequency[Channel][i])));
+    else if (Channel == 0x10)
+      for(unsigned char i = 0 ; i < 3 ; ++i)
+        RFM_Write(0x06 + i, pgm_read_byte(&(LoRa_Frequency[0][i])));
+  #elif defined(EU_868)
+    if (Channel <= 0x08)
+      for(unsigned char i = 0 ; i < 3 ; ++i)
+        RFM_Write(0x06 + i, pgm_read_byte(&(LoRa_Frequency[Channel][i])));
+    else if (Channel == 0x10)
+      for(unsigned char i = 0 ; i < 3 ; ++i)
+        RFM_Write(0x06 + i, pgm_read_byte(&(LoRa_Frequency[8][i])));
+  #else   //US915
+    if (Channel <= 0x07)
+      for(unsigned char i = 0 ; i < 3 ; ++i)
+        RFM_Write(0x06 + i, pgm_read_byte(&(LoRa_TX_Freq[Channel][i])));
+    else if (Channel >= 0x08 && Channel <= 0x0F)
+      for(unsigned char i = 0 ; i < 3 ; ++i)
+        RFM_Write(0x06 + i, pgm_read_byte(&(LoRa_RX_Freq[Channel - 0x08][i])));
+  #endif
 }
 
 /*
