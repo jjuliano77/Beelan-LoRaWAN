@@ -472,12 +472,15 @@ message_t RFM_Single_Receive(sSettings *LoRa_Settings)
     RFM_Write(0x12,0xE0);
     Message_Status = TIMEOUT;
   }
-
+  else{
+    Message_Status = NEW_MESSAGE;
+  }
+/*
   //Check for RxDone
   if(digitalRead(RFM_pins.DIO0) == HIGH)
   {
 	  Message_Status = NEW_MESSAGE;
-  }
+  }*/
 
   return Message_Status;
 }
