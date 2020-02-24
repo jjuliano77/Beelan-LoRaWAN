@@ -81,7 +81,7 @@ class LoRaWANClass
         void update(void);
         void activateISR(int on);
 
-        void onReceive(void(*callback)(int));
+        void onReceive(void(*callback)(void));
         void ISR_handler(void);
 
         // frame counter
@@ -95,7 +95,7 @@ class LoRaWANClass
         static void onDio0Rise();
 
     private:       
-        void (*_onReceive)(int);
+        void (*_onReceive)(void);
         // Messages
         unsigned char Data_Tx[64];
         sBuffer Buffer_Tx;
