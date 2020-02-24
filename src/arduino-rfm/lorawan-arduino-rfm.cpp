@@ -399,17 +399,14 @@ ISR_PREFIX void LoRaWANClass::onDio0Rise()
 void LoRaWANClass::randomChannel()
 {
     unsigned char freq_idx;
-#ifdef AS_923
-    freq_idx = random(0,9);
-    // limit drate, ch 8 -> sf7bw250
-    LoRa_Settings.Datarate_Tx = freq_idx == 0x08? 0x06 : drate_common;
-#elif defined(EU_868)    
-    freq_idx = random(0,7);
-    LoRa_Settings.Channel_Rx=freq_idx;      // same rx and tx channel 
-#else
-    freq_idx = random(0,8);
-    LoRa_Settings.Channel_Rx = freq_idx + 0x08;
-#endif
+    #ifdef AS_923
+        freq_idx = random(0,9);
+        // limit drate, ch 8 -> sf7bw250
+        LoRa_Settings.Datarate_Tx = freq_idx == 0x08? 0x06 : drate_common;
+    #else
+        freq_idx = random(0,8);
+        LoRa_Settings.Channel_Rx = freq_idx + 0x08;
+    #endif
     LoRa_Settings.Channel_Tx = freq_idx;
 }
 
